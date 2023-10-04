@@ -1886,6 +1886,7 @@ _widgets:
   _userList:
     chooseList: "リストを選択"
   clicker: "クリッカー"
+  ccjCurrentStage: "現在のステージ"
 
 _cw:
   hide: "隠す"

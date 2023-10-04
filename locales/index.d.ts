@@ -1970,6 +1970,7 @@ export interface Locale {
             "chooseList": string;
         };
         "clicker": string;
+        "ccjCurrentStage": string;
     };
     "_cw": {
         "hide": string;
