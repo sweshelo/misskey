@@ -2957,6 +2957,10 @@ export interface Locale extends ILocale {
      */
     "loadRawImages": string;
     /**
+     * 猫化(nyaize)を強制的に無効にする
+     */
+    "denyaize": string;
+    /**
      * アニメーション画像を再生しない
      */
     "disableShowingAnimatedImages": string;
@@ -4908,6 +4912,18 @@ export interface Locale extends ILocale {
      * リトライ
      */
     "gameRetry": string;
+    /**
+     * QRコード
+     */
+    "qrcode": string;
+    /**
+     * このQRコードをスキャンすると、新規登録時の招待コードが自動で入力されます。
+     */
+    "qrcodeToInvite": string;
+    /**
+     * 指定された絵文字は既に存在します。
+     */
+    "emojiAlreadyExists": string;
     "_bubbleGame": {
         /**
          * 遊び方
