@@ -8,11 +8,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<template #label>{{ invite.code }}</template>
 	<template #suffix>
 		<span v-if="invite.used">{{ i18n.ts.used }}</span>
-		<span v-else-if="isExpired" style="color: var(--error)">{{ i18n.ts.expired }}</span>
-		<span v-else style="color: var(--success)">{{ i18n.ts.unused }}</span>
+		<span v-else-if="isExpired" style="color: var(--MI_THEME-error)">{{ i18n.ts.expired }}</span>
+		<span v-else style="color: var(--MI_THEME-success)">{{ i18n.ts.unused }}</span>
+	</template>
+	<template #footer>
+		<div class="_buttons">
+			<MkButton v-if="!invite.used && !isExpired" primary rounded @click="copyInviteCode()"><i class="ti ti-copy"></i> {{ i18n.ts.copy }}</MkButton>
+			<MkButton v-if="!invite.used || moderator" danger rounded @click="deleteCode()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+		</div>
 	</template>
 
-	<div class="_gaps_s" :class="$style.root">
+	<div :class="$style.root">
 		<div :class="$style.items">
 			<div>
 				<div :class="$style.label">{{ i18n.ts.invitationCode }}</div>
@@ -54,10 +60,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkButton v-if="!invite.used && !isExpired" primary rounded @click="copyInviteCodeAsLink()"><i class="ti ti-copy"></i> {{ i18n.ts.copyLink }}</MkButton>
 			<MkButton v-if="!invite.used || moderator" danger rounded @click="deleteCode()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 		</div>
-    <div v-if="!invite.used && !isExpired">
+		<div v-if="!invite.used && !isExpired">
 			<div :class="$style.label">{{ i18n.ts.qrcode }} - {{ i18n.ts.qrcodeToInvite }}</div>
-      <vue-qrcode :value="inviteUrl" :options="option" tag="img"></vue-qrcode>
-    </div>
+			<vue-qrcode :value="inviteUrl" :options="option" tag="img"></vue-qrcode>
+		</div>
 	</div>
 </MkFolder>
 </template>
@@ -65,12 +71,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { computed } from 'vue';
 import * as Misskey from 'misskey-js';
+import VueQrcode from '@chenfengyuan/vue-qrcode';
 import MkFolder from '@/components/MkFolder.vue';
 import MkButton from '@/components/MkButton.vue';
 import { copyToClipboard } from '@/scripts/copy-to-clipboard.js';
 import { i18n } from '@/i18n.js';
 import * as os from '@/os.js';
-import VueQrcode from "@chenfengyuan/vue-qrcode";
 
 const props = defineProps<{
 	invite: Misskey.entities.InviteCode;
@@ -134,10 +140,5 @@ function copyInviteCodeAsLink() {
 	--height: 24px;
 	width: var(--height);
 	height: var(--height);
-}
-
-.buttons {
-	display: flex;
-	gap: 8px;
 }
 </style>
