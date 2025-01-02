@@ -303,7 +303,7 @@ const isMyRenote = $i && ($i.id === note.value.userId);
 const showContent = ref(false);
 const parsed = computed(() => appearNote.value.text ? mfm.parse(appearNote.value.text) : null);
 const urls = computed(() => parsed.value ? extractUrlFromMfm(parsed.value).filter((url) => appearNote.value.renote?.url !== url.href && appearNote.value.renote?.uri !== url.href) : null);
-const previewUrls = computed(() => urls.value.filter(url => url.preview));
+const previewUrls = computed(() => (urls.value ?? []).filter(url => url.preview));
 const isLong = shouldCollapsed(appearNote.value, urls.value ?? []);
 const collapsed = ref(appearNote.value.cw == null && isLong);
 const isDeleted = ref(false);
@@ -339,7 +339,7 @@ function getDomain(url) {
 }
 
 const isSuspectPhishingLink = computed(() => {
-	return urls.value.some(url => {
+	return (urls.value ?? []).some(url => {
 		// url.textが配列でない場合、配列に変換
 		const text = Array.isArray(url.text) ? url.text.join('') : url.text;
 
