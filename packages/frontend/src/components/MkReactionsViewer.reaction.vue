@@ -24,6 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { computed, inject, onMounted, shallowRef, watch, ref } from 'vue';
 import * as Misskey from 'misskey-js';
+import { getUnicodeEmoji } from '@@/js/emojilist.js';
 import MkCustomEmojiDetailedDialog from './MkCustomEmojiDetailedDialog.vue';
 import XDetails from '@/components/MkReactionsViewer.details.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
@@ -38,7 +39,6 @@ import { i18n } from '@/i18n.js';
 import * as sound from '@/scripts/sound.js';
 import { checkReactionPermissions } from '@/scripts/check-reaction-permissions.js';
 import { customEmojisMap } from '@/custom-emojis.js';
-import { getUnicodeEmoji } from '@/scripts/emojilist.js';
 
 const props = defineProps<{
 	reaction: string;
@@ -118,10 +118,12 @@ async function menu(ev) {
 		text: i18n.ts.info,
 		icon: 'ti ti-info-circle',
 		action: async () => {
-			os.popup(MkCustomEmojiDetailedDialog, {
+			const { dispose } = os.popup(MkCustomEmojiDetailedDialog, {
 				emoji: await misskeyApiGet('emoji', {
 					name: props.reaction.replace(/:/g, '').replace(/@\./, ''),
 				}),
+			}, {
+				closed: () => dispose(),
 			});
 		},
 	}], ev.currentTarget ?? ev.target);
@@ -133,7 +135,9 @@ function anime() {
 	const rect = buttonEl.value.getBoundingClientRect();
 	const x = rect.left + 16;
 	const y = rect.top + (buttonEl.value.offsetHeight / 2);
-	os.popup(MkReactionEffect, { reaction: props.reaction, x, y }, {}, 'end');
+	const { dispose } = os.popup(MkReactionEffect, { reaction: props.reaction, x, y }, {
+		end: () => dispose(),
+	});
 }
 
 watch(() => props.count, (newCount, oldCount) => {
@@ -173,13 +177,15 @@ if (!mock) {
 
 		const users = reactions.map(x => x.user);
 
-		os.popup(XDetails, {
+		const { dispose } = os.popup(XDetails, {
 			showing,
 			reaction: props.reaction,
 			users,
 			count: props.count,
 			targetElement: buttonEl.value,
-		}, {}, 'closed');
+		}, {
+			closed: () => dispose(),
+		});
 	}, 100);
 }
 </script>
@@ -207,7 +213,7 @@ if (!mock) {
 	justify-content: center;
 
 	&.canToggle {
-		background: var(--buttonBg);
+		background: var(--MI_THEME-buttonBg);
 
 		&:hover {
 			background: rgba(0, 0, 0, 0.1);
@@ -241,12 +247,12 @@ if (!mock) {
 	}
 
 	&.reacted, &.reacted:hover {
-		background: var(--accentedBg);
-		color: var(--accent);
-		box-shadow: 0 0 0 1px var(--accent) inset;
+		background: var(--MI_THEME-accentedBg);
+		color: var(--MI_THEME-accent);
+		box-shadow: 0 0 0 1px var(--MI_THEME-accent) inset;
 
 		> .count {
-			color: var(--accent);
+			color: var(--MI_THEME-accent);
 		}
 
 		> .icon {
